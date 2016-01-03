@@ -132,14 +132,17 @@ class HomingAI extends AI {
 }
 
 class Tower {
-    constructor(posx = 0, posy = 0, range = 100, cooldown = 750, projectile = null) {
+    constructor(posx = 0, posy = 0, range = 100, cooldown = 750, projectile = null, health = 100) {
         this._position = new Position(posx, posy);
         this._range = range;
         this._cooldown = cooldown;
         this._lastFired = Date.now();
         this._ready = true;
         this._projectile = projectile; // function that returns a new projectile
+        this._health = new Health();
     }
+    get health() { return this._health; };
+    set health(health = 100) { this._health = health; };
     get position() { return this._position; };
     set position(position = true) { this._position = position; };
     get ready() { return this._ready; };

@@ -34,6 +34,7 @@ class Collider {
             if (!x.AI.target || !x.health.alive()) return false;   
             x.move(elapsed);
             if (x.done) {
+                x.target.health.takeDamage(x.damage.damage);
                 if (x.target && x.target.health) {
                     x.target.health.takeDamage(x.damage.damage);
                     console.log("Tower's health: ", x.target.health.health);
