@@ -9,6 +9,7 @@
     // filenames in javascripts will be included in element order
     $javascripts = [
         "components.js",
+        "U_graphPaper.js",
         "W_game.js",
         "Y_main.js"
         ];

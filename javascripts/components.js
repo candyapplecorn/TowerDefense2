@@ -13,7 +13,11 @@ Player (empty)
  */
 "use strict"
 // Call Pythagorean
+function PythagoreanObj(obj1, obj2) {
+    return Pythagorean(obj1.x, obj1.y, obj2.x, obj2.y);
+}
 function Pythagorean(p1x, p1y, p2x, p2y) {
+    console.log("p1x: ", p1x, "p1y", p1y, "p2x ", p2x, "p2y", p2y);
     return Math.sqrt(Math.pow(p1x - p2x, 2) + Math.pow(p1y - p2y, 2));
 }
 function Pythagorean(x, y) {
@@ -21,6 +25,32 @@ function Pythagorean(x, y) {
 }
 function Slope(p1x, p1y, p2x, p2y) {
     return (p1y - p2y) / (p1x - p2x);
+}
+function calcAngle(target, projectile){
+  var opposite = (target.y - projectile.y),
+      adjacent = (target.x - projectile.x);
+  // Angle is in radians
+  var angle = Math.atan(opposite/adjacent) * (180/Math.PI);
+  angle += adjacent < 0 ? 180 : 0;
+  return angle;
+}
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
 /*
  * Entity will just contain components; should have a unique id
@@ -38,9 +68,11 @@ class Position {
     get y() { return this._y; };
     set y(y = 0) { this._y = y; };
     set x(x = 0) { this._x = x; };
-    get pos() {
+    get position() {
         return {x: this._x, y: this._y};
     };
+    close(otherpos) { console.log("ubsude otherpose");return PythagoreanObj(this.position, otherpos.position) < 1 };
+    close(x, y) { return Pythagorean(this._x, this._y, x, y) < 1 };
 }
 
 /*
@@ -74,28 +106,42 @@ class HomingAI extends AI {
     constructor(target = null) {
         super();
         this._target = target;
+        this._angle = 0;
     }
+    get angle() { return this._angle; };
+    set angle(angle = 0) { this._angle = angle; };
     get target() { return this._target; };
     set target(target = null) { this._target = target; };
     move(posx, posy, speed, elapsed) {
-        var distance = Pythagorean(posx, posy, this._target.x, this._target.y);
-        var slope = Slope(posx, posy, this._target.x, this._target.y);
-        var angle = Math.atan(slope);
-        posx += Math.sin(angle) * speed * elapsed / 1000;
-        posx += Math.cos(angle) * speed * elapsed / 1000;
-        return { posx: posx, posy: posy, done: (distance < 1 ? true : false) };
+        var r2degInverse = Math.PI / 180;
+        var distance = Math.sqrt(Math.pow(posx - this._target.position.x, 2) + 
+                                 Math.pow(posy - this._target.position.y, 2));
+        this._angle = r2degInverse * calcAngle({x:this._target.position.x, y:this._target.position.y},
+                                                            {x:posx, y:posy});
+        var movex = Math.cos(this._angle) * speed * elapsed / 1000;
+        var movey = Math.sin(this._angle) * speed * elapsed / 1000;
+        var movedistance = Pythagorean(movex, movey);
+        if (movedistance > distance) {
+            movex /= movedistance / distance;
+            movey /= movedistance / distance;
+        }
+        /*if (this._target.health && this._target.health.health < 100)
+        console.log("posx: ", Math.floor(posx), "posy ",Math.floor(posy), "tarx: ", Math.floor(this._target.position.x), "tary: ", Math.floor(this._target.position.y), " movex: ", Math.floor(movex*100)/100, " movey: ", Math.floor(movey*100)/100, " distance: ", Math.floor(distance));*/
+        return [ posx + movex, posy + movey, (distance < 1 ? true : false)];
     };
 }
 
-class Tower extends Position {
+class Tower {
     constructor(posx = 0, posy = 0, range = 100, cooldown = 750, projectile = null) {
-        super(posx, posy);
+        this._position = new Position(posx, posy);
         this._range = range;
         this._cooldown = cooldown;
         this._lastFired = Date.now();
         this._ready = true;
         this._projectile = projectile; // function that returns a new projectile
     }
+    get position() { return this._position; };
+    set position(position = true) { this._position = position; };
     get ready() { return this._ready; };
     set ready(ready = true) { this._ready = ready; };
     get range() { return this._range; };
@@ -111,7 +157,8 @@ class Tower extends Position {
     fire (target) { 
         if (this._ready) {
             this._lastFired = 0;
-            return this._projectile(this._x, this._y, target);
+            this._ready = false;
+            return this._projectile(this.position.x, this.position.y, target);
         }
         return false;
     }
@@ -123,6 +170,7 @@ class Health {
     }
     get health() { return this._health; };
     set health(health = 100) { this._health = health; };
+    takeDamage(damage = 0) { this._health -= damage; }
     alive() { return this._health > 0; }
 }
 
@@ -141,14 +189,17 @@ class HomingBullet extends Entity {
     constructor(posx = 0, posy = 0, velx = 0, vely = 0, 
                 target = null, speed = 5, damage = 5, health = 100) {
         super();
-        this._pos = new Position(posx, posy);
+        this._position = new Position(posx, posy);
         this._vel = new Velocity(velx, vely);
         this._AI = new HomingAI(target);
         this._speed = speed;
         this._done = false;
         this._damage = new Damage(damage);
         this._health = new Health(health);
+        this._target = target;
     }
+    get target() { return this._target; };
+    set target(target) { this._target = target; };
     get health() { return this._health; };
     set health(health) { this._health = health; };
     get done() { return this._done; };
@@ -157,25 +208,32 @@ class HomingBullet extends Entity {
     set speed(speed) { this._speed = speed; };
     get damage() { return this._damage; };
     set damage(damage) { this._damage = damage; };
-    get pos() { return this._pos; };
+    get position() { return this._position; };
     get vel() { return this._vel; };
     get AI() { return this._AI; };
     move(elapsed) {
-        [this._pos._x, this._pos._y, this._done] = Object.values(
-            this._AI.move(this._pos._x, this._pos._y,
-                           this._speed, elapsed)); 
+        [this._position.x, this._position.y, this._done] = 
+            this._AI.move(this._position.x, this._position.y,
+                           this._speed, elapsed); 
     }
 }
 class TinyBullet extends HomingBullet {
-    // posx = 0, posy = 0, velx = 0, vely = 0, //target = null, speed = 5, damage = 5, health = 100) {
+    // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100) {
     constructor(posx = 0, posy = 0, target) {                        
-        super(posx, posy, 0, 0, target, 5, 5, 100);
+        super(posx, posy, 0, 0, target, 20, 5, 100);
     }
 
 }
 
+class TinyEnemy extends HomingBullet {
+    // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100) {
+    constructor(posx = 0, posy = 0, target) {                        
+        super(posx, posy, 0, 0, target, 5, 5, 30);
+    }
+}
+
 class TinyTower extends Tower {
-    constructor(posx = 0, posy = 0, range = 100, cooldown = 750,
+    constructor(posx = 0, posy = 0, range = 141, cooldown = 750,
     projectile = function(px = 0, py = 0, target){
         return new TinyBullet(px, py, target);
     }) 
