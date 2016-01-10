@@ -28,13 +28,14 @@ for (var c = 0; c < game._map._cols - 2; c++)
 for (var c = game._map._cols - 1; c > 1; c--) 
     game._map.insertTower(3, c,  new TinyTower(
         game._map._tiles[3][c].position.x,
-        game._map._tiles[3][c].position.y
-    ));
+        game._map._tiles[3][c].position.y));
 for (var c = 0; c < game._map._cols - 2; c++) 
     game._map.insertTower(5, c,  new TinyTower(
         game._map._tiles[5][c].position.x,
-        game._map._tiles[5][c].position.y
-    ));
+        game._map._tiles[5][c].position.y));
+game._map.insertTower(7, 9,  new TinyTower(
+    game._map._tiles[7][9].position.x,
+    game._map._tiles[7][9].position.y));
 // Normally this would be called on init, and then whenever a tower is added/removed
 console.log("Pathing was successful? ", game._map.calculatePathing());
 
