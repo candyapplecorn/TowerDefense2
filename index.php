@@ -5,7 +5,7 @@
     <title>Another TD</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/theme.css" />
 <?PHP 
-    $dir = "lib/";
+    $dir = "lib/js/";
     // filenames in javascripts will be included in element order
     $javascripts = [
         "components.js",
@@ -17,9 +17,11 @@
     $avoid = [
         "maptest.js"
         ];
+    $avoid = array_merge($avoid, $javascripts);
+    array_push($javascripts, "all.min.js");
     foreach ($javascripts as $file)
         if (array_search($file, $avoid) != false) continue; else
-        echo "<script name=\"".$file."\" defer src=\"" . $dir . $file . "\"></script>"."\n";
+            echo "<script name=\"".$file."\" defer src=\"" . $dir . $file . "\"></script>"."\n";
     // All javascript files not named in $javascripts will now be included
 /*if (is_dir($dir))
   if ($dh = opendir($dir)){

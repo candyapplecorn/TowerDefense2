@@ -1,3 +1,4 @@
+$(function(){
 // list of bullets
 // dimensions of window
 var winDim = { width: 500, height: 500 };
@@ -48,3 +49,4 @@ function step(){
     window.requestAnimationFrame(step);
 }
 window.requestAnimationFrame(step);
+});
