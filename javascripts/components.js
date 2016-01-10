@@ -125,8 +125,6 @@ class HomingAI extends AI {
             movex /= movedistance / distance;
             movey /= movedistance / distance;
         }
-        /*if (this._target.health && this._target.health.health < 100)
-        console.log("posx: ", Math.floor(posx), "posy ",Math.floor(posy), "tarx: ", Math.floor(this._target.position.x), "tary: ", Math.floor(this._target.position.y), " movex: ", Math.floor(movex*100)/100, " movey: ", Math.floor(movey*100)/100, " distance: ", Math.floor(distance));*/
         return [ posx + movex, posy + movey, (distance < 1 ? true : false)];
     };
 }
@@ -140,6 +138,7 @@ class Tower {
         this._ready = true;
         this._projectile = projectile; // function that returns a new projectile
         this._health = new Health();
+        this._target = null;
     }
     get health() { return this._health; };
     set health(health = 100) { this._health = health; };
@@ -153,12 +152,15 @@ class Tower {
     set lastFired(lastFired = 0) { this._lastFired = lastFired; };
     get cooldown() { return this._cooldown; };
     set cooldown(cooldown = 0) { this._cooldown = cooldown; };
+    get target() { return this._target; };
+    set target(target = 0) { this._target = target; };
     update (elapsed) { 
         this._lastFired += elapsed; 
         this._ready = this._lastFired > this._cooldown ? true : false;
     }
     fire (target) { 
         if (this._ready) {
+            this._target = target;
             this._lastFired = 0;
             this._ready = false;
             return this._projectile(this.position.x, this.position.y, target);
@@ -199,10 +201,10 @@ class HomingBullet extends Entity {
         this._done = false;
         this._damage = new Damage(damage);
         this._health = new Health(health);
-        this._target = target;
+        /*this._target = target;*/
     }
-    get target() { return this._target; };
-    set target(target) { this._target = target; };
+    get target() { return this._AI.target;/*_target;*/ };
+    set target(target) { this._AI.target = target; };
     get health() { return this._health; };
     set health(health) { this._health = health; };
     get done() { return this._done; };
@@ -223,7 +225,7 @@ class HomingBullet extends Entity {
 class TinyBullet extends HomingBullet {
     // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100) {
     constructor(posx = 0, posy = 0, target) {                        
-        super(posx, posy, 0, 0, target, 20, 5, 100);
+        super(posx, posy, 0, 0, target, 60, 5, 100);
     }
 
 }
@@ -231,12 +233,12 @@ class TinyBullet extends HomingBullet {
 class TinyEnemy extends HomingBullet {
     // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100) {
     constructor(posx = 0, posy = 0, target) {                        
-        super(posx, posy, 0, 0, target, 5, 5, 30);
+        super(posx, posy, 0, 0, target, 5 * 4, 5, 100);
     }
 }
 
 class TinyTower extends Tower {
-    constructor(posx = 0, posy = 0, range = 141, cooldown = 750,
+    constructor(posx = 0, posy = 0, range = 141, cooldown = 3000,
     projectile = function(px = 0, py = 0, target){
         return new TinyBullet(px, py, target);
     }) 

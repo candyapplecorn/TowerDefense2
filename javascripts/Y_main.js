@@ -5,41 +5,35 @@ var DEBUG = true;
 // timestamp of last step
 var LAST = Date.now();
 var ELAPSED = 0;
-var game = new Game();
-// PLACEHOLDER for ANIMATE !!
-class Animator {
-    constructor(game, canvas) { 
-        this._game = game; 
-        this._canvas = canvas;
-        this._context = canvas.getContext('2d');
-    };
-    update(game) {
-        for (var enemy of this._game.enemies) {
-            var x = enemy.position.x, y = enemy.position.y;
-            this._context.fillStyle = "green";
-            this._context.fillRect(x - 5, y - 5, 10, 10);
-        }
-        for (var tower of this._game.towers) {
-            var x = tower.position.x, y = tower.position.y;
-            this._context.fillStyle = "black";
-            this._context.fillRect(x - 10, y - 10, 20, 20);
-        }
-        for (var proj of this._game.projectiles) {
-            var x = proj.position.x, y = proj.position.y;
-            this._context.fillStyle = "red";
-            this._context.fillRect(x - 2.5, y - 2.5, 5, 5);
-        }
-    };
-    animate(game) { this.update(game); };
-}
-var scene = new Animator(game, graphPaper.canvas);
+var game = new Game(10, 10, winDim.height, winDim.width);
+// Canvas setup
+var canvas = document.createElement("canvas");
+document.body.appendChild(canvas);
+var context = canvas.getContext('2d');
+canvas.width = winDim.width;
+canvas.height = winDim.height;
+context.fillStyle = "white";
+context.fillRect(0, 0, canvas.width, canvas.height);
+var scene = new Animator(game, canvas);
 
-// testing 
-var mytower = new TinyTower(0, 0);
-var myenemy = new TinyEnemy(winDim.width, winDim.height);
-var mybullet = mytower.fire(myenemy);
-game.towers.push(mytower);
-
+console.log("Pathing was successful? ", game._map.calculatePathing());
+for (var c = 0; c < game._map._cols - 2; c++) 
+    game._map.insertTower(1, c,  new TinyTower(
+        game._map._tiles[1][c].position.x,
+        game._map._tiles[1][c].position.y
+    ));
+for (var c = game._map._cols - 1; c > 1; c--) 
+    game._map.insertTower(3, c,  new TinyTower(
+        game._map._tiles[3][c].position.x,
+        game._map._tiles[3][c].position.y
+    ));
+for (var c = 0; c < game._map._cols - 2; c++) 
+    game._map.insertTower(5, c,  new TinyTower(
+        game._map._tiles[5][c].position.x,
+        game._map._tiles[5][c].position.y
+    ));
+// Normally this would be called on init, and then whenever a tower is added/removed
+console.log("Pathing was successful? ", game._map.calculatePathing());
 
 function step(){
     ELAPSED = Date.now() - LAST;
@@ -48,7 +42,7 @@ function step(){
     game.step(ELAPSED);
 
     // Draw everything
-    graphPaper.graphPaper();
+    //graphPaper.graphPaper();
     scene.animate(game); // PLACEHOLDER
 
     window.requestAnimationFrame(step);
