@@ -32,6 +32,10 @@ class Animator {
             var x = enemy.position.x, y = enemy.position.y;
             this._context.fillStyle = "green";
             this._context.fillRect(x - 5, y - 5, 10, 10);
+            this._context.fillStyle = "black";
+            this._context.fillRect(x - 6, y - 9, 12, 3);
+            this._context.fillStyle = "red";
+            this._context.fillRect(x - 6, y - 8, Math.floor(enemy.health.howdead * 12), 2);
         }
         for (var tower of this._game.towers) {
             var x = tower.position.x, y = tower.position.y;

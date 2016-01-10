@@ -24,9 +24,9 @@ gulp.task('scripts', ['clean'], function() {
     .pipe(babel({
             presets: ['es2015']
         }))
-      .pipe(concat('all.min.js'))
-      //.pipe(uglify())
-    //.pipe(sourcemaps.write())
+    .pipe(concat('all.min.js'))
+    .pipe(uglify())
+    //.pipe(sourcemaps.write()) // FOR DEBUGGING.
     .pipe(gulp.dest('lib/js'));
 });
  

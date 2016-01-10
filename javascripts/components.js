@@ -171,8 +171,12 @@ class Tower {
 
 class Health {
     constructor(health = 100){
+        this._max = health;
         this._health = health;
     }
+    get howdead() { return this._health / this._max; };
+    get max() { return this._max; };
+    set max(max = 100) { this._max = max; };
     get health() { return this._health; };
     set health(health = 100) { this._health = health; };
     takeDamage(damage = 0) { this._health -= damage; }

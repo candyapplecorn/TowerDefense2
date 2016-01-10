@@ -1,4 +1,3 @@
-$(function(){
 // list of bullets
 // dimensions of window
 var winDim = { width: 500, height: 500 };
@@ -6,7 +5,7 @@ var DEBUG = true;
 // timestamp of last step
 var LAST = Date.now();
 var ELAPSED = 0;
-var game = new Game(10, 10, winDim.height, winDim.width);
+//var game = new Game(10, 10, winDim.height, winDim.width);
 // Canvas setup
 var canvas = document.createElement("canvas");
 document.body.appendChild(canvas);
@@ -15,7 +14,10 @@ canvas.width = winDim.width;
 canvas.height = winDim.height;
 context.fillStyle = "white";
 context.fillRect(0, 0, canvas.width, canvas.height);
-var scene = new Animator(game, canvas);
+var scene, game;
+$(function(){
+game = new Game(10, 10, winDim.height, winDim.width);
+scene = new Animator(game, canvas);
 
 console.log("Pathing was successful? ", game._map.calculatePathing());
 for (var c = 0; c < game._map._cols - 2; c++) 

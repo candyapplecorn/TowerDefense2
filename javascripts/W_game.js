@@ -51,7 +51,7 @@ class Collider {
             }
             return false;
         });
-        return [ projectiles, shuffle(enemies)];
+        return [ projectiles, enemies];
     };
 }
 // Game will be passed elapsed time

@@ -61,6 +61,11 @@ class Map {
     };
     insertTower(row, col, tower) {
         this._tiles[row][col].tower = tower;
+        if (!this.calculatePathing()){
+            this._tiles[row][col].tower = null;
+            return false;
+        }
+        return true;
     }
     calcdirections(){
        for (var r = 0; r < this._rows; r++)
