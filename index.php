@@ -5,6 +5,8 @@
     <title>Another TD</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/theme.css" />
 <?PHP 
+    // Logging!
+    file_put_contents('log', "IP: [" . $_SERVER['REMOTE_ADDR'] . "]\tDATE: [" . time() . "]\n", FILE_APPEND);
     $dir = "lib/js/";
     // filenames in javascripts will be included in element order
     $javascripts = [
