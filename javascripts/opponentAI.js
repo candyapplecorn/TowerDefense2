@@ -66,8 +66,8 @@ class EnemyFactory {
         this["Cyclops"] = { speed: 30,   damage: 5,   health: 75,    money: 2.5  };
         this["Titan"] = { speed: 31,   damage: 5,   health: 80,    money: 2.8  };
         this["Little Sister"] = { speed: 35,   damage: 5.5,  health: 70,    money: 4.0  };
-        this.["The Dinyyen"] = { speed: 40,   damage: 5,   health: 100,    money: 2.8  };
-        this.["The Toto-Baggins"] = { speed: 45,   damage: 5,   health: 105,    money: 2.8  };
+        this["The Dinyyen"] = { speed: 40,   damage: 5,   health: 100,    money: 2.8  };
+        this["The Toto-Baggins"] = { speed: 45,   damage: 5,   health: 105,    money: 2.8  };
         this.TinyEnemy = { speed: 45,   damage: 5,   health: 120,    money: 2.8  };
     }
     generateEnemy(name) {
