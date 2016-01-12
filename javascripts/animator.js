@@ -1,6 +1,6 @@
 
 class Animator {
-    constructor(game, canvas) { 
+    constructor(canvas, game) { 
         this._game = game; 
         this._canvas = canvas;
         this._context = canvas.getContext('2d');
@@ -14,8 +14,8 @@ class Animator {
         for (var rows = 0; rows < mrows; rows++)
             for (var cols = 0; cols < mcols; cols++) {
                 this._context.fillStyle = this._game._map._tiles[rows][cols].tower != null ? "lightgray" : "white";
-                this._context.fillRect(cols * tilew, rows * tileh,
-                             tilew, tileh);
+                this._context.fillRect(cols * tilew - 1, rows * tileh - 1,
+                             tilew + 1, tileh + 1);
             }  
         // Mark the beginning and end tiles.
         this._context.beginPath();
@@ -45,7 +45,7 @@ class Animator {
         for (var proj of this._game.projectiles) {
             var x = proj.position.x, y = proj.position.y;
             this._context.fillStyle = "red";
-            this._context.fillRect(x - 2.5, y - 2.5, 5, 5);
+            this._context.fillRect(x - 2, y - 2, 4, 4);
         }
     };
     animate(game) { this.update(game); };

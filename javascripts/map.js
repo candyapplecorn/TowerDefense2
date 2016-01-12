@@ -7,6 +7,7 @@ class Tile {
         this._position = new Position();
         this._checked = false;
         this._tower = null;
+        this._changed = Date.now() - 60000;
         if (mapw && maph) this.calcCenter(maph, mapw);
     };
     get position(){ return this._position; };
@@ -15,7 +16,19 @@ class Tile {
     get row(){ return this._row; };
     set row(r){ this._row = r; };
     get tower(){ return this._tower; }; 
-    set tower(r){ this._tower = r; }; // might want to actually write some code here
+    set tower(r){ 
+        var now = Date.now();
+        if (now - this._changed < 1000) return false;
+        this._tower = r, this._changed = now;
+        return true;
+    };
+    sell() {
+        var now = Date.now();
+        if (now - this._changed < 1000) return false;
+        var refund = this._tower ? this._tower.cost.refund : null;
+        this._tower = null, this._changed = now;
+        return refund;
+    }
     get col(){ return this._col; };
     set col(r){ this._col = r; };
     get next(){ return this._next; };
@@ -46,6 +59,17 @@ class Map {
         else        this._begin = this._tiles[0][0];
         if (end)    this._end = this._tiles[end.row][end.col];
         else        this._end = this._tiles[rows - 1][cols - 1];
+        this.calculatePathing();
+    };
+    // DOESN'T WORK RIGHT
+    resize(height, width){
+        this._maph = height, this._mapw = width;
+        for (var inner of this._tiles) for (var tile of inner) {
+            tile.calcCenter(height, width);
+            if (tile.tower)
+                tile.tower.position.x = tile.position.x,
+                tile.tower.position.y = tile.position.y;
+        }
     };
     get tiles(){ return this._tiles; };
     set begin(b){ this._begin = b; };
@@ -59,14 +83,38 @@ class Map {
     get towers() { 
         return this._tiles.reduce((a, b)=>{return a.concat(b);}).filter(x=>x.tower).map(x=>x.tower); 
     };
+    /*
+     *  Takes a tower and tries to insert it.
+     *  If the insert fails, returns false.
+     *  If the insert would break pathing, returns false;
+     *  If the insert succeeded, return either True if
+     *  tile was null before, or the refund cost if the
+     *  tile was a tower before. Can use typeof to determine if refund returned
+     */
     insertTower(row, col, tower) {
-        this._tiles[row][col].tower = tower;
+        if (row % 1 || col % 1)
+            row = Math.floor(this._rows * row),
+            col = Math.floor(this._cols * col);
+        var old = this.tiles[row][col]._tower;
+        var result = (this._tiles[row][col].tower = tower);
         if (!this.calculatePathing()){
-            this._tiles[row][col].tower = null;
+            console.log("PATHING FAILED!");
+            this._tiles[row][col]._tower = null;
+            this.calculatePathing()
             return false;
         }
-        return true;
-    }
+        if (!result) return false;
+        if (old == null) return tower.cost.money;
+        else return tower.cost.money - old.cost.refund;
+    };
+    removeTower(row, col) {
+        if (row % 1 || col % 1)
+            row = Math.floor(this._rows * row),
+            col = Math.floor(this._cols * col);
+        var refund = this.tiles[row][col].sell();
+        this.calculatePathing();
+        return refund;
+    };
     calcdirections(){
        for (var r = 0; r < this._rows; r++)
        for (var c = 0; c < this._cols; c++) {

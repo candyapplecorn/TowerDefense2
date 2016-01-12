@@ -55,7 +55,11 @@ function shuffle(array) {
 /*
  * Entity will just contain components; should have a unique id
  */
-class Entity {}
+class Entity {
+    constructor(name = "") {
+        this._name = name;
+    };
+}
 
 /*
  * Position in x and y space
@@ -97,6 +101,27 @@ class Damage {
     set damage(damage = 0) { this._damage = damage; };
 }
 
+class Money {
+    constructor(amount = 1, refund = 0.75) {
+        this._money = amount;
+        this._refundRatio = refund;
+        this._created = Date.now();
+    }
+    get money() { return this._money; };
+    set money(m = 0) { this._money = m >= 0 ? m : 0; };
+    deposit(amount) { 
+        if (typeof amount != "number") return;
+        this._money += amount; };
+    withdraw(amount) { 
+        if (typeof amount != "number") return;
+        if (amount > this._money) return false;
+        this._money -= amount; 
+        return this._money; };
+    get refund () { 
+        return this._money * (Date.now() - this._created > 1000 * 60 ? 
+        this._refundRatio : 1); };
+}
+
 /*
  *  AI - How does an entity behave?
  */
@@ -130,7 +155,7 @@ class HomingAI extends AI {
 }
 
 class Tower {
-    constructor(posx = 0, posy = 0, range = 100, cooldown = 750, projectile = null, health = 100) {
+    constructor(posx = 0, posy = 0, range = 100, cooldown = 750, projectile = null, cost = 10, health = 100) {
         this._position = new Position(posx, posy);
         this._range = range;
         this._cooldown = cooldown;
@@ -139,7 +164,10 @@ class Tower {
         this._projectile = projectile; // function that returns a new projectile
         this._health = new Health();
         this._target = null;
+        this._cost = new Money(cost);
     }
+    get cost() { return this._cost; };
+    set cost(cost = 100) { this._cost = cost; };
     get health() { return this._health; };
     set health(health = 100) { this._health = health; };
     get position() { return this._position; };
@@ -196,8 +224,8 @@ class Health {
  */
 class HomingBullet extends Entity {
     constructor(posx = 0, posy = 0, velx = 0, vely = 0, 
-                target = null, speed = 5, damage = 5, health = 100) {
-        super();
+                target = null, speed = 5, damage = 5, health = 100, money = 1, name = "") {
+        super(name);
         this._position = new Position(posx, posy);
         this._vel = new Velocity(velx, vely);
         this._AI = new HomingAI(target);
@@ -205,8 +233,11 @@ class HomingBullet extends Entity {
         this._done = false;
         this._damage = new Damage(damage);
         this._health = new Health(health);
+        this._money = new Money(money);
         /*this._target = target;*/
     }
+    get money() { return this._money; };
+    set money(money) { this._money = money; };
     get target() { return this._AI.target;/*_target;*/ };
     set target(target) { this._AI.target = target; };
     get health() { return this._health; };
@@ -235,9 +266,9 @@ class TinyBullet extends HomingBullet {
 }
 
 class TinyEnemy extends HomingBullet {
-    // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100) {
+    // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100, money = 1) {
     constructor(posx = 0, posy = 0, target) {                        
-        super(posx, posy, 0, 0, target, 5 * 4, 5, 100);
+        super(posx, posy, 0, 0, target, 5 * 4, 5, 100, 2);
     }
 }
 
@@ -245,17 +276,24 @@ class TinyTower extends Tower {
     constructor(posx = 0, posy = 0, range = 141, cooldown = 3000,
     projectile = function(px = 0, py = 0, target){
         return new TinyBullet(px, py, target);
-    }) 
+    }, cost = 10, health = 100) 
     {
-        super(posx, posy, range, cooldown, projectile);
+        super(posx, posy, range, cooldown, projectile, cost);
         this._AI = new TowerAI(); // Is this needed?
     }
     get AI() { return this._AI; }; // Is this needed?
 }
 
-class Player extends Health {
-    constructor(health = 100){
-        super();
-        this._health = health;
+class Player {
+    constructor(health = 100, money = 100){
+        this._health = new Health(health);
+        this._money = new Money(money);
+        this._kills = 0;
     }
+    get kills() { return this._kills; };
+    set kills(kills) { this._kills = kills; };
+    get money() { return this._money; };
+    set money(money) { this._money = money; };
+    get health() { return this._health; };
+    set health(health) { this._health = health; };
 }
