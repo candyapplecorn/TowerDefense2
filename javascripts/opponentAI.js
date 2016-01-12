@@ -17,6 +17,10 @@ class opponentNPCAI {
             ["Armored Bear", 3000, 12],
             ["Small Enemy", 2500, 20], 
             ["Feisty Enemy", 2250, 30], 
+            ["Gordon", 2150, 30], 
+            ["Cyclops", 2100, 30], 
+            ["Titan", 2050, 30], 
+            ["Little Sister", 1000, 10], 
             ["TinyEnemy", 2000, 10000000] // END
         ];
         this._currentStage = 0;
@@ -36,7 +40,7 @@ class opponentNPCAI {
         this._stages[this._currentStage][2]--;
         if (this._stages[this._currentStage][2] == 0) {
             this._currentStage++;
-            this._elapsed = -10000; // 10 second waiting period
+            this._elapsed = -5000; // 10 second waiting period
             return; }
         this._game._enemies.push(
             this._em.generateEnemy(this._stages[this._currentStage][0]));
@@ -49,14 +53,18 @@ class EnemyFactory {
         };
         this.Begin = { name: "Begin" };
         this.Sheep = { speed: 10,   damage: 1,    health: 5,    money: 0.5  };
-        this.Wolf = { speed: 9,   damage: 1.5,    health: 15,    money: 1  };
-        this.Unicorn = { speed: 9,   damage: 2,    health: 20,    money: 1  };
-        this.Sealion = { speed: 8,   damage: 2.5,   health: 25,    money: 1  };
-        this.Bear = { speed: 7,   damage: 3,   health: 30,    money: 2  };
-        this["Armored Bear"] = { speed: 5,   damage: 3,   health: 50,    money: 2  };
-        this["Small Enemy"] = { speed: 5.5,   damage: 5,   health: 60,    money: 2.5  };
-        this["Feisty Enemy"] = { speed: 6,   damage: 5,   health: 65,    money: 2.5  };
-        this.TinyEnemy = { speed: 5,   damage: 5,   health: 100,    money: 2.5  };
+        this.Wolf = { speed: 11,   damage: 1.5,    health: 15,    money: 1  };
+        this.Unicorn = { speed: 11,   damage: 2,    health: 20,    money: 1  };
+        this.Sealion = { speed: 12,   damage: 2.5,   health: 25,    money: 1  };
+        this.Bear = { speed: 13,   damage: 3,   health: 30,    money: 2  };
+        this["Armored Bear"] = { speed: 14,   damage: 3,   health: 50,    money: 2  };
+        this["Small Enemy"] = { speed: 20,   damage: 5,   health: 60,    money: 2.5  };
+        this["Feisty Enemy"] = { speed: 25,   damage: 5,   health: 65,    money: 2.5  };
+        this["Gorgon"] = { speed: 27,   damage: 5,   health: 70,    money: 2.5  };
+        this["Cyclops"] = { speed: 30,   damage: 5,   health: 75,    money: 2.5  };
+        this["Titan"] = { speed: 31,   damage: 5,   health: 80,    money: 2.8  };
+        this["Little Sister"] = { speed: 40,   damage: 5.5,  health: 70,    money: 4.0  };
+        this.TinyEnemy = { speed: 30,   damage: 5,   health: 100,    money: 2.8  };
     }
     generateEnemy(name) {
         if (!this[name]) name = "Sheep";
