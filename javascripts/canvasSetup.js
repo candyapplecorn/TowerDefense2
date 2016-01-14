@@ -5,10 +5,6 @@ class CanvasContainer {
                         .getElementsByTagName("canvas")[0];
         this._cc = (document.getElementById(canvasContainer)).getBoundingClientRect();
         this._canvas.width = this._cc.width - 6, this._canvas.height = this._cc.height;
-        /*this._domstats = {
-            money:  $('money'),
-            kills:  $('kills'),
-            health: $('health') };*/
         this.addListenersToButtons();
     };
     addListenersToButtons() {
@@ -23,12 +19,10 @@ class CanvasContainer {
                 evt.target.className += " selected";
                 // Change state!
                 state.state = evt.target.id;
-                if (evt.target.id == "info" && evt.target.innerHTML.indexOf("info") == -1) {
+                if (evt.target.id == "info" && evt.target.innerHTML.indexOf("info") == -1)
                     evt.target.innerHTML = "Click place to<br>buy towers.<br>Click sell to<br>remove them.";
-                }
-                else if (state.state = "info" && evt.target.id == "info") {
+                else if (state.state = "info" && evt.target.id == "info")
                     evt.target.innerHTML = "Sorry, this<br>doesn't do<br>anything.";
-                }
             }
             else
                 evt.target.className = evt.target.className.replace(/selected/i, "");
@@ -40,14 +34,9 @@ class CanvasContainer {
 class StatWatcher {
     constructor(game) {
         this._game = game;
-        this._stats = {
-            money: document.getElementById("money"),
-            health: document.getElementById("health"),
-            kills: document.getElementById("kills"),
-            enemyname: document.getElementById("enemyname"),
-            enemyhealth: document.getElementById("enemyhealth"),
-            enemyspawnrate: document.getElementById("enemyspawnrate")
-        };
+        this._stats = {};
+        for (var x of ["money", "health", "kills", "enemyname", "enemyhealth", "enemyspawnrate"] )
+            this._stats[x] = document.getElementById(x);
         this.update();
     };
     update() {

@@ -2,20 +2,7 @@
  *  Turns out you can access members directly with _member, but if you access
  *  them without the _, you will call the get or set things
  */
-/*
--- Position (x, y)
--- Velocity (x, y)
-Physics (body)
-Sprite (images, animations)
-Health (value)
-Character (name, level)
-Player (empty)
- */
 "use strict"
-// Call Pythagorean
-function PythagoreanObj(obj1, obj2) {
-    return Pythagorean(obj1.x, obj1.y, obj2.x, obj2.y);
-}
 function Pythagorean(p1x, p1y, p2x, p2y) {
     console.log("p1x: ", p1x, "p1y", p1y, "p2x ", p2x, "p2y", p2y);
     return Math.sqrt(Math.pow(p1x - p2x, 2) + Math.pow(p1y - p2y, 2));
@@ -25,7 +12,7 @@ function Pythagorean(x, y) {
 }
 function Slope(p1x, p1y, p2x, p2y) {
     return (p1y - p2y) / (p1x - p2x);
-}
+} 
 function calcAngle(target, projectile){
   var opposite = (target.y - projectile.y),
       adjacent = (target.x - projectile.x);
@@ -59,6 +46,8 @@ class Entity {
     constructor(name = "") {
         this._name = name;
     };
+    get name() { return this._name; };
+    set name(n) { this._name = n; };
 }
 
 /*
@@ -146,10 +135,9 @@ class HomingAI extends AI {
         var movex = Math.cos(this._angle) * speed * elapsed / 1000;
         var movey = Math.sin(this._angle) * speed * elapsed / 1000;
         var movedistance = Pythagorean(movex, movey);
-        if (movedistance > distance) {
-            movex /= movedistance / distance;
+        if (movedistance > distance)
+            movex /= movedistance / distance,
             movey /= movedistance / distance;
-        }
         return [ posx + movex, posy + movey, (distance < 1 ? true : false)];
     };
 }
@@ -181,16 +169,14 @@ class Tower {
     get cooldown() { return this._cooldown; };
     set cooldown(cooldown = 0) { this._cooldown = cooldown; };
     get target() { return this._target; };
-    set target(target = 0) { this._target = target; };
+    set target(target = null) { this._target = target; };
     update (elapsed) { 
         this._lastFired += elapsed; 
         this._ready = this._lastFired > this._cooldown ? true : false;
     }
     fire (target) { 
         if (this._ready) {
-            this._target = target;
-            this._lastFired = 0;
-            this._ready = false;
+            this._target = target, this._lastFired = 0, this._ready = false;
             return this._projectile(this.position.x, this.position.y, target);
         }
         return false;
@@ -228,17 +214,16 @@ class HomingBullet extends Entity {
         super(name);
         this._position = new Position(posx, posy);
         this._vel = new Velocity(velx, vely);
-        this._AI = new HomingAI(target);
+        this._AI = new HomingAI(target); 
         this._speed = speed;
         this._done = false;
         this._damage = new Damage(damage);
         this._health = new Health(health);
         this._money = new Money(money);
-        /*this._target = target;*/
     }
     get money() { return this._money; };
     set money(money) { this._money = money; };
-    get target() { return this._AI.target;/*_target;*/ };
+    get target() { return this._AI.target; };
     set target(target) { this._AI.target = target; };
     get health() { return this._health; };
     set health(health) { this._health = health; };
@@ -258,7 +243,6 @@ class HomingBullet extends Entity {
     }
 }
 class TinyBullet extends HomingBullet {
-    // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100) {
     constructor(posx = 0, posy = 0, target) {                        
         super(posx, posy, 0, 0, target, 60, 5, 100);
     }
@@ -266,7 +250,6 @@ class TinyBullet extends HomingBullet {
 }
 
 class TinyEnemy extends HomingBullet {
-    // posx = 0, posy = 0, velx = 0, vely = 0, target = null, speed = 5, damage = 5, health = 100, money = 1) {
     constructor(posx = 0, posy = 0, target) {                        
         super(posx, posy, 0, 0, target, 5 * 4, 5, 100, 2);
     }

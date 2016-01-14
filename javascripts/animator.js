@@ -4,6 +4,25 @@ class Animator {
         this._game = game; 
         this._canvas = canvas;
         this._context = canvas.getContext('2d');
+        this._colorkeys = {
+            "Begin": "black",
+            "Sheep": "#CCCCCC",
+            "Wolf":"#BBBBBB",
+            "Unicorn":"#AAAAAA",
+            "Sealion":"#FABE19",
+            "Bear":"#55BB99",
+            "Armored Bear":"#55BB99",
+            "Small Enemy":"#55BB99",
+            "Feisty Enemy":"#55BB99",
+            "Gorgon":"#55BB99",
+            "Cyclops":"#55BB99",
+            "Titan":"#55BB99",
+            "Little Sister":"#55BB99",
+            "The Dinyyen":"#338844",
+            "The Toto-Baggins":"#55BB99",
+            "Tough Guy":"#55BB99",
+            "TinyEnemy":"#55BB99"
+        };
     };
     update(game) {
         var tilew = this._canvas.width / this._game._map._cols,
@@ -30,8 +49,11 @@ class Animator {
         this._context.stroke();
         for (var enemy of this._game.enemies) {
             var x = enemy.position.x, y = enemy.position.y;
-            this._context.fillStyle = "green";
+            // This is the part that should be unique for each enemy
+            
+            this._context.fillStyle = this._colorkeys[enemy.name] || "lightgreen";
             this._context.fillRect(x - 5, y - 5, 10, 10);
+            // Draw a health bar!
             this._context.fillStyle = "black";
             this._context.fillRect(x - 6, y - 9, 12, 3);
             this._context.fillStyle = "red";

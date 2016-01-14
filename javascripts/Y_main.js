@@ -16,13 +16,12 @@ clickhandler = new MouseHandler(canvas, game);
 scene = new Animator(canvas, game);
 stats = new StatWatcher(game);
 
-//var driver = new Driver(game).drive();
-
 function step(){
     ELAPSED = Date.now() - LAST;
     LAST += ELAPSED;
     if (ELAPSED > 1000) // Prevent tabbing out from destroying game
-        ELAPSED = Date.now() - 1000;
+        ELAPSED = 1000 / 30,
+        LAST = Date.now();
     // Update all time-dependant entities
     game.step(ELAPSED);
 

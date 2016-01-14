@@ -23,7 +23,9 @@ class opponentNPCAI {
             ["Little Sister", 1000, 10], 
             ["The Dinyyen", 2000, 20],
             ["The Toto-Baggins", 1950, 25],
-            ["TinyEnemy", 1700, 10000000] // END
+            ["Tough Guy", 1700, 30],
+            ["Tougher Guy", 1500, 30],
+            ["TinyEnemy", 1250, 10000000] // END
         ];
         this._currentStage = 0;
     };
@@ -42,7 +44,7 @@ class opponentNPCAI {
         this._stages[this._currentStage][2]--;
         if (this._stages[this._currentStage][2] == 0) {
             this._currentStage++;
-            this._elapsed = -5000; // 10 second waiting period
+            this._elapsed = -5000; // 5 second waiting period
             return; }
         this._game._enemies.push(
             this._em.generateEnemy(this._stages[this._currentStage][0]));
@@ -68,7 +70,9 @@ class EnemyFactory {
         this["Little Sister"] = { speed: 35,   damage: 5.5,  health: 70,    money: 4.0  };
         this["The Dinyyen"] = { speed: 40,   damage: 5,   health: 100,    money: 2.8  };
         this["The Toto-Baggins"] = { speed: 45,   damage: 5,   health: 105,    money: 2.8  };
-        this.TinyEnemy = { speed: 45,   damage: 5,   health: 120,    money: 2.8  };
+        this["Tough Guy"] = { speed: 45,   damage: 5,   health: 105,    money: 2.8  };
+        this["Tougher Guy"] = { speed: 45,   damage: 5,   health: 150,    money: 2.8  };
+        this.TinyEnemy = { speed: 45,   damage: 5,   health: 160,    money: 2.8  };
     }
     generateEnemy(name) {
         if (!this[name]) name = "Sheep";
