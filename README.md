@@ -1,7 +1,9 @@
 # TowerDefense2
 My second attempt at a tower defense game.
 
-## Hosted on Github Pages: [https://candyapplecorn.github.io/TowerDefense2/](https://candyapplecorn.github.io/TowerDefense2/)
+## Play the game: [https://candyapplecorn.github.io/TowerDefense2/](https://candyapplecorn.github.io/TowerDefense2/)
+
+![td3-compressed.gif](td3-compressed.gif)
 
 ~~Hosted at: [http://joeburger.ax.lt/TowerDefense2/]~~
 
